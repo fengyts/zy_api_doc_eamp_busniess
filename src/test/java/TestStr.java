@@ -13,6 +13,7 @@ public class TestStr {
 	public static void main(String[] args) {
 		String str = Constant.GeneratorError.apiErrorExample;
 		System.out.println(str);
+		System.out.println(Constant.GeneratorError.apiError);
 	}
 
 }

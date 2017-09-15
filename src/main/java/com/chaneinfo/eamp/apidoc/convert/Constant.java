@@ -31,6 +31,7 @@ public interface Constant {
 	static String COMMENT_END = "*/";
 
 	public class GeneratorError {
+		public static String apiErrorExample = "";
 		private static StringBuilder res = new StringBuilder();
 		static {
 			res.append(STAR).append(SPACE).append(ApiDocAnnotationEnum.apiErrorExample.name()).append(SPACE)
@@ -38,11 +39,13 @@ public interface Constant {
 					.append(SPACE5).append(BRACES_L).append(RN_AND_STAR).append(SPACE8).append("\"code\": \"1\",\r\n*")
 					.append(SPACE8).append("\"msg\": \"参数错误\",\r\n*").append(SPACE8).append("\"jsonData\": {}\r\n*")
 					.append(SPACE5 + BRACES_R);
+			apiErrorExample = res.toString();
+
+			res.delete(0, res.length()); // 清空
 		}
 
-		public static String apiErrorExample = res.toString();
-		public static String apiError = "";
-		
+		public static String apiError = res.toString();
+
 	}
 
 }

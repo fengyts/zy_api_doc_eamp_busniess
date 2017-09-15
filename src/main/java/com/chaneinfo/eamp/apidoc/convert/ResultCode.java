@@ -90,6 +90,7 @@ public class ResultCode {
 	}
 
 	private static Map<String, String> resultMsg;
+	private static Map<String, String> sysMsg;
 
 	static {
 		resultMsg = new HashMap<String, String>();
@@ -101,6 +102,16 @@ public class ResultCode {
 		resultMsg.put(TOKEN_TIMEOUT, "登录失效");
 		resultMsg.put(PERMISSION_DENIED, "权限不足");
 		resultMsg.put(DATA_ERROR, "数据异常");
+		
+		sysMsg = new HashMap<String, String>();
+		sysMsg.put(SUCCESS, "成功");
+		sysMsg.put(ERROR, "系统异常");
+		sysMsg.put(PARAMS_ERROR, "参数错误");
+		sysMsg.put(ILLEGAL_REQUEST, "非法请求");
+		sysMsg.put(SIGN_ERROR, "签名错误");
+		sysMsg.put(TOKEN_TIMEOUT, "登录失效");
+		sysMsg.put(PERMISSION_DENIED, "权限不足");
+		sysMsg.put(DATA_ERROR, "数据异常");
 		
 
 		resultMsg.put(Common.CAPTCHA_REQUIRED, "请填写图形验证码");
