@@ -1,0 +1,14 @@
+{
+  "name": "展义API文档",
+  "version": "1.0.0",
+  "url": "http://192.168.9.240:8080/eamp-business",
+  "description": "展义OpenAPI文档本文档为展义Open API接口文档，主要是列出展义所提供给移动端和前端使用的接口参数/返回值，字段等说明等。",
+  "template": {
+    "withCompare": "true",
+    "language":"zh-cn"
+  },
+  "header":{
+  	"title":"文档说明",
+  	"filename":"header.md"
+  }
+}
