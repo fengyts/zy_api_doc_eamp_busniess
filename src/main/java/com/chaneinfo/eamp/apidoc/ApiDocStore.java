@@ -13,6 +13,7 @@ public class ApiDocStore {
 	 * @api {post,get} /api/store/add 1.店铺新增 
 	 * @apiName add
 	 * @apiVersion 1.0.0
+	 * @apiDeprecated use now (#store:add)
 	 * @apiDescription <code>接口约定</code>
 	 * 1.	参数是大小写敏感的
 	 * 2.	所有接口为标准的 HTTP POST 协议
