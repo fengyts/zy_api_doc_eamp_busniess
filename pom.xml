@@ -37,7 +37,6 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -59,9 +58,6 @@
 			<artifactId>poi-scratchpad</artifactId>
 			<version>${poi.version}</version>
 		</dependency>
-<<<<<<< .merge_file_a06956
-
-=======
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-excelant -->
 		<dependency>
 		    <groupId>org.apache.poi</groupId>
@@ -74,8 +70,12 @@
 	      <artifactId>commons-lang3</artifactId>
 	      <version>3.3.2</version>
 	    </dependency>
-	    
->>>>>>> .merge_file_a15644
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

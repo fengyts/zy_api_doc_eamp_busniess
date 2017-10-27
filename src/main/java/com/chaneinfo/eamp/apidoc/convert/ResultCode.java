@@ -89,8 +89,8 @@ public class ResultCode {
 		return resultMsg.get(code);
 	}
 
-	public static Map<String, String> resultMsg;
-	public static Map<String, String> sysMsg;
+	private static Map<String, String> resultMsg;
+	private static Map<String, String> sysMsg;
 
 	static {
 		resultMsg = new HashMap<String, String>();
