@@ -1,209 +1,27 @@
 package com.chaneinfo.eamp.apidoc.convert;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.util.Map;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.xwpf.usermodel.IBodyElement;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 public class Generate {
 
-	public static Map<String, Map<String, Object>> paraseInter() {
+	public static String paraseInter() {
 		try {
 			File file = new File("E:/test/testPOI.docx");
-			InputStream is = new FileInputStream(file);
-
-			List<IBodyElement> interEles = new ArrayList<IBodyElement>();
-
-			XWPFDocument doc = new XWPFDocument(is);
-			List<IBodyElement> bodyElements = doc.getBodyElements();
-
-			int i = 0;// 一级大纲视图计数器
-			for (IBodyElement element : bodyElements) {
-				if (element instanceof XWPFParagraph) {
-					XWPFParagraph para = (XWPFParagraph) element;
-					if (CollectionUtils.isEmpty(para.getRuns())) {
-						continue;
-					}
-					String styleId = para.getStyleID();
-					if ("1".equals(styleId)) {
-						i++;
-						continue;
-					}
-				}
-				if (i > 3) {
-					break;
-				}
-				if (i != 3) {
-					continue;
-				}
-
-				interEles.add(element);
+			ExtractWord extract = new ExtractWord(file);
+			Map<String, Object> interData = extract.extract();
+			StringBuilder apidoc = new StringBuilder();
+			for (Map.Entry<String, Object> entry : interData.entrySet()) {
+				String key = entry.getKey();
+				Map<String, Object> value = (Map<String, Object>) entry.getValue();
+				
+				apidoc.append("apidocInter").append(key).append("(){}\r\n");
 			}
-			doc.close();
 
-			Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
-			Map<String, Object> interN = null;
-			// boolean flag = false;
-			int num = 0;
-			int count = 0;
-			for (IBodyElement element : interEles) {
-				num = count / 11;
-				XWPFParagraph para = null;
-				XWPFTable table = null;
-				if (element instanceof XWPFParagraph) {
-					para = (XWPFParagraph) element;
-					// String styleId = para.getStyleID();
-				} else if (element instanceof XWPFTable) {
-					table = (XWPFTable) element;
-				} else {
-				}
-				if (0 == count % 11) {
-					// inter.put("interName", para.getText());
-					interN = new HashMap<String, Object>();
-					interN.put("interName", para.getText());
-					result.put(String.valueOf(num), interN);
-				} else {
-					interN = result.get(String.valueOf(num));
-					switch (count % 11) {
-					case 1:// 请求方式
-						List<XWPFRun> runsM = para.getRuns();
-						String method = "";
-						for (int r = 2; r < runsM.size(); r++) {
-							method += runsM.get(r).getText(0);
-						}
-						interN.put("requestMethod", method);
-						break;
-					case 2:// url
-						String url = "";
-						List<XWPFRun> runsU = para.getRuns();
-						for (int ru = 1; ru < runsU.size(); ru++) {
-							url += runsU.get(ru).getText(0);
-						}
-						interN.put("requestUrl", url);
-						break;
-					case 3:// 请求参数
-							// interN.put("requestParam", null);
-						break;
-					case 4:// 请求参数table
-						List<Param> listParams = new ArrayList<Param>();
-						List<XWPFTableRow> rowsP = table.getRows();
-						for (int c = 1; c < rowsP.size(); c++) {// 从1开始，忽略表头
-							XWPFTableRow rowP = rowsP.get(c);
-							XWPFTableCell cellName = rowP.getCell(0);
-							String cellText = cellName.getText();
-							if (StringUtils.isBlank(cellText)) { // 忽略空白表格行
-								continue;
-							}
-							Param param = new Param();
-							param.setName(cellText);
-							param.setCode(rowP.getCell(1).getText());
-							XWPFTableCell cellDesc = rowP.getCell(2);
-							List<XWPFParagraph> paragraphs = cellDesc.getParagraphs();
-							int size = paragraphs.size();
-							String desc = "";
-							for (int p = 0; p < size; p++) {
-								XWPFParagraph paraP = paragraphs.get(p);
-								if (0 == p) {
-									param.setType(paraP.getText());
-								} else if (1 == p) {
-									param.setIsMust("M".equals(paraP.getText()));
-								} else {
-									desc += paraP.getText();
-								}
-
-							}
-							param.setDesc(desc);
-
-							listParams.add(param);
-						}
-
-						interN.put("params", listParams);
-						break;
-					case 5:// 响应参数列表
-						break;
-					case 6:// 响应参数列表table
-						List<ResultData> res = new ArrayList<ResultData>();
-						List<XWPFTableRow> rowsR = table.getRows();
-						for (int r = 1; r < rowsR.size(); r++) { // 从1开始，忽略表头
-							XWPFTableRow rowR = rowsR.get(r);
-							XWPFTableCell cellName = rowR.getCell(0);
-							String cellText = cellName.getText();
-							if (StringUtils.isBlank(cellText)) { // 忽略空白表格行
-								continue;
-							}
-							ResultData rd = new ResultData();
-							rd.setName(cellText);
-							rd.setCode(rowR.getCell(1).getText());
-							List<XWPFParagraph> paragraphs = rowR.getCell(2).getParagraphs();
-							int size = paragraphs.size();
-							String desc = "";
-							for (int rr = 0; rr < size; rr++) {
-								XWPFParagraph paraR = paragraphs.get(rr);
-								if (0 == rr) {
-									rd.setType(paraR.getText());
-								} else {
-									desc += paraR.getText();
-								}
-							}
-							rd.setDesc(desc);
-
-							res.add(rd);
-						}
-
-						interN.put("resDatas", res);
-						break;
-					case 7:// 响应码
-						break;
-					case 8:// 响应码table
-						List<ResultCodeParase> listResCode = new ArrayList<ResultCodeParase>();
-						List<XWPFTableRow> rowsRC = table.getRows();
-						for (int r = 1; r < rowsRC.size(); r++) { // 从1开始，忽略表头
-							XWPFTableRow rowRC = rowsRC.get(r);
-							XWPFTableCell cellName = rowRC.getCell(0);
-							String cellText = cellName.getText();
-							if (StringUtils.isBlank(cellText)) { // 忽略空白表格行
-								continue;
-							}
-							ResultCodeParase rc = new ResultCodeParase();
-							rc.setCode(rowRC.getCell(0).getText());
-							rc.setMsg(rowRC.getCell(1).getText());
-							rc.setDesc(rowRC.getCell(2).getText());
-
-							listResCode.add(rc);
-						}
-
-						interN.put("resCodes", listResCode);
-						break;
-					case 9:// 响应参数样例
-						break;
-					case 10:// 响应参数样例table
-						interN.put("resExample", table.getText());
-						break;
-					default:
-						break;
-					}
-
-					result.put(String.valueOf(num), interN);
-				}
-
-				count++;
-			}
-			
-			is.close();
-			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -211,8 +29,25 @@ public class Generate {
 
 	}
 
-	public static void main(String[] args) {
-		paraseInter();
+	public static void main(String[] args) throws Exception {
+		// paraseInter();
+
+		// File file = new File("src/main/java/test.properties");
+		// FileInputStream fis = new FileInputStream(file);
+		// BufferedReader reader = new BufferedReader(new FileReader(file));
+		// String res = reader.readLine();
+		// System.out.println(res);
+
+		final String rootPath = "src/main/java/com/chaneinfo/eamp/apidoc/";
+		final String packageName = "package com.chaneinfo.eamp.apidoc;";
+
+		FileOutputStream fos = new FileOutputStream(rootPath + "TestApi.java");
+		StringBuilder javaContent = new StringBuilder();
+		javaContent.append(packageName).append("\r\n\n");
+		javaContent.append("public class TestApi {}");
+		fos.write(javaContent.toString().getBytes());
+		fos.flush();
+		fos.close();
 	}
 
 }
