@@ -20,6 +20,17 @@ public class ResultCode {
 	public static final String TOKEN_TIMEOUT = "999004";
 	public static final String PERMISSION_DENIED = "999005";
 	public static final String DATA_ERROR = "999006";
+	
+	public static final class Sys {
+		public static final String SUCCESS = "0";
+		public static final String ERROR = "999999";
+		public static final String PARAMS_ERROR = "999001";
+		public static final String ILLEGAL_REQUEST = "999002";
+		public static final String SIGN_ERROR = "999003";
+		public static final String TOKEN_TIMEOUT = "999004";
+		public static final String PERMISSION_DENIED = "999005";
+		public static final String DATA_ERROR = "999006";
+	}
 
 	public static final class Common {
 		public static final String CAPTCHA_REQUIRED = "100001";
@@ -44,8 +55,6 @@ public class ResultCode {
 		public static final String ENTERPRIESE_UNREGISTER = "200007";
 		public static final String ENTERPRIESE_REGISTERING = "200008";
 		public static final String ENTERPRIESE_REGISTERED = "200009";
-		
-		
 	}
 
 	public static final class Enterprise {

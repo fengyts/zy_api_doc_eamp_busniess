@@ -27,7 +27,7 @@ public class ExtractWord {
 		this.file = file;
 	}
 
-	@SuppressWarnings({ "unchecked" })
+//	@SuppressWarnings({ "unchecked" })
 	public Map<String, Object> extract() throws IOException {
 		InputStream is = new FileInputStream(file);
 		XWPFDocument doc = new XWPFDocument(is);
@@ -60,7 +60,8 @@ public class ExtractWord {
 			// doc.close();
 
 			Map<String, Object> result = new HashMap<String, Object>();
-			Map<String, Object> interN = null;
+//			Map<String, Object> interN = null;
+			ApiDocDO apidoc = null;
 			int num = 0;
 			int count = 0;
 			for (IBodyElement element : interEles) {
@@ -76,11 +77,15 @@ public class ExtractWord {
 				}
 				if (0 == count % 11) {
 					// inter.put("interName", para.getText());
-					interN = new HashMap<String, Object>();
-					interN.put("interName", para.getText());
-					result.put(String.valueOf(num), interN);
+//					interN = new HashMap<String, Object>();
+//					interN.put("interName", para.getText());
+//					result.put(String.valueOf(num), interN);
+					apidoc = new ApiDocDO();
+					apidoc.setInterName(para.getText());
+					result.put(String.valueOf(num), apidoc);
 				} else {
-					interN = (Map<String, Object>) result.get(String.valueOf(num));
+//					interN = (Map<String, Object>) result.get(String.valueOf(num));
+					apidoc = (ApiDocDO) result.get(String.valueOf(num));
 					switch (count % 11) {
 					case 1:// 请求方式
 						List<XWPFRun> runsM = para.getRuns();
@@ -88,7 +93,8 @@ public class ExtractWord {
 						for (int r = 2; r < runsM.size(); r++) {
 							method += runsM.get(r).getText(0);
 						}
-						interN.put("requestMethod", method);
+//						interN.put("requestMethod", method);
+						apidoc.setRequestMethod(method);
 						break;
 					case 2:// url
 						String url = "";
@@ -96,7 +102,8 @@ public class ExtractWord {
 						for (int ru = 1; ru < runsU.size(); ru++) {
 							url += runsU.get(ru).getText(0);
 						}
-						interN.put("requestUrl", url);
+//						interN.put("requestUrl", url);
+						apidoc.setRequestUrl(url);
 						break;
 					case 3:// 请求参数
 							// interN.put("requestParam", null);
@@ -134,7 +141,8 @@ public class ExtractWord {
 							listParams.add(param);
 						}
 
-						interN.put("params", listParams);
+//						interN.put("params", listParams);
+						apidoc.setParams(listParams);
 						break;
 					case 5:// 响应参数列表
 						break;
@@ -167,7 +175,8 @@ public class ExtractWord {
 							res.add(rd);
 						}
 
-						interN.put("resDatas", res);
+//						interN.put("resDatas", res);
+						apidoc.setResDatas(res);
 						break;
 					case 7:// 响应码
 						break;
@@ -189,18 +198,21 @@ public class ExtractWord {
 							listResCode.add(rc);
 						}
 
-						interN.put("resCodes", listResCode);
+//						interN.put("resCodes", listResCode);
+						apidoc.setResCodes(listResCode);
 						break;
 					case 9:// 响应参数样例
 						break;
 					case 10:// 响应参数样例table
-						interN.put("resExample", table.getText());
+//						interN.put("resExample", table.getText());
+						apidoc.setResExample(table.getText());
 						break;
 					default:
 						break;
 					}
 
-					result.put(String.valueOf(num), interN);
+//					result.put(String.valueOf(num), interN);
+					result.put(String.valueOf(num), apidoc);
 				}
 
 				count++;
